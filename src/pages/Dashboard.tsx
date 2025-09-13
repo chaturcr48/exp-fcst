@@ -17,7 +17,7 @@ const Dashboard: React.FC = () => {
 
   const [filters, setFilters] = useState<FilterState>({
     selectedCategories: categories,
-    forecastRange: 6,
+    forecastRange: 3,
     historicalRange: 12,
     showHistorical: true,
     showConfidence: true,
