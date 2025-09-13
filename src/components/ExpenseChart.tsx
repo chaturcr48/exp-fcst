@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   LineChart,
   Line,
@@ -9,10 +9,10 @@ import {
   ResponsiveContainer,
   Area,
   ComposedChart,
-  Legend
-} from 'recharts';
-import { format, parseISO } from 'date-fns';
-import { ChartDataPoint } from '../types';
+  Legend,
+} from "recharts";
+import { format, parseISO } from "date-fns";
+import { ChartDataPoint } from "../types";
 
 interface ExpenseChartProps {
   data: ChartDataPoint[];
@@ -27,20 +27,20 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({
   categories,
   colors,
   showHistorical,
-  showConfidence
+  showConfidence,
 }) => {
   const formatXAxis = (tickItem: string) => {
     try {
-      return format(new Date(tickItem + '-01'), 'MMM yyyy');
+      return format(new Date(tickItem + "-01"), "MMM yyyy");
     } catch {
       return tickItem;
     }
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value);
@@ -51,15 +51,17 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({
       return (
         <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
           <p className="font-semibold text-gray-900 mb-2">
-            {format(new Date(label + '-01'), 'MMMM yyyy')}
+            {format(new Date(label + "-01"), "MMMM yyyy")}
           </p>
           {payload.map((entry: any, index: number) => {
-            const [category, type] = entry.dataKey.split('_');
-            const color = colors[category] || '#3B82F6';
-            
+            const [category, type] = entry.dataKey.split("_");
+            const color = colors[category] || "#3B82F6";
+
             return (
               <p key={index} style={{ color }} className="text-sm font-medium">
-                {`${category} ${type === 'actual' ? '(Actual)' : '(Forecast)'}: ${formatCurrency(entry.value)}`}
+                {`${category} ${
+                  type === "actual" ? "(Actual)" : "(Forecast)"
+                }: ${formatCurrency(entry.value)}`}
               </p>
             );
           })}
@@ -72,7 +74,9 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({
   if (!data || data.length === 0) {
     return (
       <div className="h-96 flex items-center justify-center bg-gray-50 rounded-lg">
-        <p className="text-gray-500">No data available for the selected filters</p>
+        <p className="text-gray-500">
+          No data available for the selected filters
+        </p>
       </div>
     );
   }
@@ -80,53 +84,68 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Expense Forecast Visualization</h2>
-        <p className="text-sm text-gray-600 mt-1">Historical data and future projections by category</p>
+        <h2 className="text-xl font-semibold text-gray-900">
+          Expense Forecast Visualization
+        </h2>
+        <p className="text-sm text-gray-600 mt-1">
+          Historical data and future projections by category
+        </p>
       </div>
-      
+
       <ResponsiveContainer width="100%" height={500}>
-        <ComposedChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+        <ComposedChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-          <XAxis 
-            dataKey="month" 
+          <XAxis
+            dataKey="month"
             tick={{ fontSize: 12 }}
             tickFormatter={formatXAxis}
             stroke="#6b7280"
           />
-          <YAxis 
+          <YAxis
             tick={{ fontSize: 12 }}
             tickFormatter={formatCurrency}
             stroke="#6b7280"
-            domain={['dataMin', 'dataMax']}
+            domain={[
+              (dataMin: number) => dataMin * 0.95, // 5% padding below min
+              (dataMax: number) => dataMax * 1.05, // 5% padding above max
+            ]}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
 
           {/* Confidence Intervals (Areas) */}
-          {showConfidence && categories.map((category) => (
-            <Area
-              key={`${category}-confidence`}
-              dataKey={`${category}_upper`}
-              stroke="none"
-              fill={`${colors[category]}20`}
-              fillOpacity={0.3}
-              connectNulls={false}
-            />
-          ))}
+          {showConfidence &&
+            categories.map((category) => (
+              <Area
+                key={`${category}-confidence`}
+                dataKey={`${category}_upper`}
+                stroke="none"
+                fill={`${colors[category]}20`}
+                fillOpacity={0.8}
+                connectNulls={false}
+                name={`${category} (Confidence Interval)`}
+                isAnimationActive={false}
+                yAxisId="main"
+              />
+            ))}
 
           {/* Historical Data Lines */}
-          {showHistorical && categories.map((category) => (
-            <Line
-              key={`${category}-actual`}
-              type="monotone"
-              dataKey={`${category}_actual`}
-              stroke={colors[category]}
-              strokeWidth={2}
-              dot={{ r: 4, fill: colors[category] }}
-              connectNulls={false}
-              name={`${category} (Actual)`}
-            />
-          ))}
+          {showHistorical &&
+            categories.map((category) => (
+              <Line
+                key={`${category}-actual`}
+                type="monotone"
+                dataKey={`${category}_actual`}
+                stroke={colors[category]}
+                strokeWidth={2}
+                dot={{ r: 4, fill: colors[category] }}
+                connectNulls={false}
+                name={`${category} (Actual)`}
+              />
+            ))}
 
           {/* Forecast Lines */}
           {categories.map((category) => (
