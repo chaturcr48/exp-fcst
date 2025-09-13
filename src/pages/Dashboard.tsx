@@ -18,6 +18,7 @@ const Dashboard: React.FC = () => {
   const [filters, setFilters] = useState<FilterState>({
     selectedCategories: categories,
     forecastRange: 6,
+    historicalRange: 12,
     showHistorical: true,
     showConfidence: true,
     dateRange: {
@@ -34,8 +35,8 @@ const Dashboard: React.FC = () => {
   }, [categories]);
 
   const chartData = useMemo(() => 
-    processChartData(expenseData, forecastData, filters.selectedCategories, filters.dateRange, filters.forecastRange),
-    [expenseData, forecastData, filters.selectedCategories, filters.dateRange, filters.forecastRange]
+    processChartData(expenseData, forecastData, filters.selectedCategories, filters.dateRange, filters.forecastRange, filters.historicalRange),
+    [expenseData, forecastData, filters.selectedCategories, filters.dateRange, filters.forecastRange, filters.historicalRange]
   );
 
   const categoryColors = useMemo(() => 

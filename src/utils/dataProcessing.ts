@@ -1,5 +1,5 @@
 import { format, parseISO, isWithinInterval } from 'date-fns';
-import { addMonths } from 'date-fns';
+import { addMonths, subMonths } from 'date-fns';
 import { ExpenseData, ForecastData, ChartDataPoint } from '../types';
 
 export const getUniqueCategories = (
@@ -16,16 +16,26 @@ export const processChartData = (
   forecastData: ForecastData[],
   selectedCategories: string[],
   dateRange: { start: Date | null; end: Date | null },
-  forecastRange: number
+  forecastRange: number,
+  historicalRange: number
 ): ChartDataPoint[] => {
   const dataMap = new Map<string, ChartDataPoint>();
 
   // Calculate forecast cutoff date
   const now = new Date();
   const forecastCutoff = addMonths(now, forecastRange);
+  
+  // Calculate historical cutoff date
+  const historicalCutoff = historicalRange > 0 ? subMonths(now, historicalRange) : null;
+  
   // Process expense data
   expenseData
     .filter(item => selectedCategories.includes(item.category))
+    .filter(item => {
+      if (historicalCutoff === null) return true; // Show all historical data if range is 0
+      const date = parseISO(item.month);
+      return date >= historicalCutoff;
+    })
     .forEach(item => {
       const date = parseISO(item.month);
       const monthKey = format(date, 'yyyy-MM');

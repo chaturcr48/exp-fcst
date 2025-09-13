@@ -76,6 +76,22 @@ const FilterPanel: React.FC<FilterPanelProps> = ({
         </select>
       </div>
 
+      {/* Historical Range */}
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Historical Range</h3>
+        <select
+          value={filters.historicalRange}
+          onChange={(e) => onFiltersChange({ ...filters, historicalRange: Number(e.target.value) })}
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value={6}>6 Months</option>
+          <option value={12}>12 Months</option>
+          <option value={24}>24 Months</option>
+          <option value={36}>36 Months</option>
+          <option value={0}>All Historical Data</option>
+        </select>
+      </div>
+
       {/* Date Range */}
       <div>
         <div className="flex items-center space-x-2 mb-4">

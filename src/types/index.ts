@@ -21,6 +21,7 @@ export interface ChartDataPoint {
 export interface FilterState {
   selectedCategories: string[];
   forecastRange: number;
+  historicalRange: number;
   showHistorical: boolean;
   showConfidence: boolean;
   dateRange: {
