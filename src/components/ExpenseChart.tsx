@@ -97,6 +97,7 @@ const ExpenseChart: React.FC<ExpenseChartProps> = ({
             tick={{ fontSize: 12 }}
             tickFormatter={formatCurrency}
             stroke="#6b7280"
+            domain={['dataMin', 'dataMax']}
           />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
