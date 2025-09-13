@@ -34,8 +34,8 @@ const Dashboard: React.FC = () => {
   }, [categories]);
 
   const chartData = useMemo(() => 
-    processChartData(expenseData, forecastData, filters.selectedCategories, filters.dateRange),
-    [expenseData, forecastData, filters.selectedCategories, filters.dateRange]
+    processChartData(expenseData, forecastData, filters.selectedCategories, filters.dateRange, filters.forecastRange),
+    [expenseData, forecastData, filters.selectedCategories, filters.dateRange, filters.forecastRange]
   );
 
   const categoryColors = useMemo(() => 
